@@ -13,10 +13,7 @@ class MainView extends BaseHTMLElement { // extends native HTMLElement
 	init() { // called once on the first connectedCallback
 
 		this.append(html`
-			<div class="hello-box">
-				<c-ico href="#ico-thumb"></c-ico>
-				Hello <strong>World</strong>
-			</div>
+			<v-project></v-project>
 		`);
 
 	}
