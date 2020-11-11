@@ -55,7 +55,7 @@ export class TaskComponent extends BaseHTMLElement {
 	set data(data: Task) {
 		this.#data = data;
 		attr(this, {
-			'data-id': '' + data.id,
+			'data-id': (data?.id != null) ? '' + data?.id : null,
 			'data-type': 'Task'
 		});
 

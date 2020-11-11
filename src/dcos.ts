@@ -20,7 +20,7 @@ interface ListOptions<D> {
 class DcoMock<E extends Ided>{
 	#entity: string;
 	#seq = 0;
-	#store = new Map<number, E & Ided>();
+	#store = new Map<number, E>();
 
 	constructor(entity: string) {
 		this.#entity = entity;
@@ -57,8 +57,8 @@ class DcoMock<E extends Ided>{
 	/** 
 	 * TODO: listOptions not implemented yet 
 	 **/
-	async list(opts?: ListOptions<E>): Promise<(Partial<E> & Ided)[]> {
-		const dataList: (Partial<E> & Ided)[] = [];
+	async list(opts?: ListOptions<E>): Promise<E[]> {
+		const dataList: E[] = [];
 
 		for (const entity of this.#store.values()) {
 			dataList.push(deepClone(entity));

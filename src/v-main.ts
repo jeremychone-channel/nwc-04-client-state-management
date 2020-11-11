@@ -1,6 +1,6 @@
 import { BaseHTMLElement, customElement, first, html, onEvent } from 'dom-native';
 
-@customElement('v-main') // same as customElements.define('v-main', IcoElement) 
+@customElement('v-main') // same as customElements.define('v-main', MainView) 
 class MainView extends BaseHTMLElement { // extends native HTMLElement
 
 	#clickCount = 0; // private, transpiled by TypeScript.
