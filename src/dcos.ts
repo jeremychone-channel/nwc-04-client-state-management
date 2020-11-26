@@ -6,17 +6,6 @@ const dcoHub = hub('dcoHub');
 
 type Ided = { id: number };
 
-/** 
- * dco list options filtering / ordering data result.
- * TODO: NOT IMPLEMENTED YET
- */
-interface ListOptions<D> {
-	limit?: number;
-	offset?: number;
-	matches?: Partial<D>;
-	orderBy?: keyof D;
-}
-
 class DcoMock<E extends Ided>{
 	#entity: string;
 	#seq = 0;
@@ -33,7 +22,9 @@ class DcoMock<E extends Ided>{
 		this.#store.set(dataToStore.id, dataToStore);
 
 		// trigger dco create event
-		dcoHub.pub(this.#entity, 'create', deepClone(dataToStore));
+		const entity = deepClone(dataToStore);
+		dcoHub.pub(this.#entity, 'create', entity);
+		return entity;
 	}
 
 	async get(id: number): Promise<E | undefined> {
@@ -47,17 +38,16 @@ class DcoMock<E extends Ided>{
 		const storedData = this.#store.get(id);
 		if (storedData == null) throw new Error(`DcoProto Update - No data found for id ${id}`);
 
-		// assign the new data to it (no deep merge at this point)		
+		// update the stored data	
 		assign(storedData, deepClone(data));
 
 		// trigger data event
-		dcoHub.pub(this.#entity, 'update', deepClone(storedData));
+		const entity = deepClone(storedData);
+		dcoHub.pub(this.#entity, 'update', entity);
+		return entity;
 	}
 
-	/** 
-	 * TODO: listOptions not implemented yet 
-	 **/
-	async list(opts?: ListOptions<E>): Promise<E[]> {
+	async list(): Promise<E[]> {
 		const dataList: E[] = [];
 
 		for (const entity of this.#store.values()) {
@@ -68,21 +58,6 @@ class DcoMock<E extends Ided>{
 		return dataList.reverse();
 	}
 
-	async remove(id: number): Promise<boolean> {
-		let didRemove = false;
-
-		// remove data if found
-		const dataToRemove = await this.get(id);
-		if (dataToRemove) {
-			this.#store.delete(id);
-			didRemove = true;
-		}
-
-		// trigger data event
-		dcoHub.pub(this.#entity, 'delete', deepClone(dataToRemove));
-
-		return didRemove;
-	}
 }
 
 //#region    ---------- Task DCO ---------- 

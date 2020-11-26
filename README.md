@@ -1,6 +1,10 @@
-Demo code for a simple but scalable approach to state management with Native Web Components. 
+Demo code for a simple but scalable approach to state management with Native Web Components WITHOUT frameworks, just with best practices.
 
-Source code for [video: State Management concepts with Native Web Component in 200s](https://youtu.be/PXT4b7YCVVE)
+- [video: State Management with Native Web Components, without frameworks (full code walkthrough)](https://youtu.be/k2RLCMetpLw)
+- [video: State Management concepts with Native Web Component in 200s](https://youtu.be/PXT4b7YCVVE)
+
+- Based on [dom-native quickstart](https://github.com/dom-native/quickstart)
+`git clone git@github.com:dom-native/quickstart.git my-app`
 
 ## Install & Run
 

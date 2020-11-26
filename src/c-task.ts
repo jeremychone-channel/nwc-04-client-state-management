@@ -1,9 +1,7 @@
-import { adoptStyleSheets, append, attr, BaseHTMLElement, className, css, customElement, onEvent, trigger } from 'dom-native';
+import { adoptStyleSheets, append, BaseHTMLElement, className, css, customElement, onEvent, trigger } from 'dom-native';
 import { Task } from './dcos';
 
-
 const _shadowCss = css`
-
 	:host{
 		background: #fff;
 		padding: 1rem;
@@ -12,7 +10,7 @@ const _shadowCss = css`
 		
 		display: grid;
 		grid-template-columns: 1.5rem 1fr 2rem;
-		grid-gap: .5rem;
+		gap: .5rem;
 		align-items: center;
 
 		transition: .5s;
@@ -24,16 +22,16 @@ const _shadowCss = css`
 		height: 1rem;
 	}
 
+	span{
+		display: flex;
+		align-items: center;
+	}
+
 	c-ico{
 		cursor: pointer;
 		width: 2rem;
 		height: 2rem;
 		opacity: .2;
-	}
-
-	span{
-		display: flex;
-		align-items: center;
 	}
 
 	:host(.fav) c-ico{
@@ -45,45 +43,45 @@ const _shadowCss = css`
 		box-shadow: var(--elev-1);
 		opacity: .6;
 	}
+
+	:host(.done) span{
+		text-decoration: line-through;
+	}	
 `;
 
 @customElement('c-task')
 export class TaskComponent extends BaseHTMLElement {
 
 	//#region    ---------- Data ---------- 
-	#data!: Task;
-	set data(data: Task) {
-		this.#data = data;
-		attr(this, {
-			'data-id': (data?.id != null) ? '' + data?.id : null,
-			'data-type': 'Task'
-		});
+	#dataId!: number;
+	get dataId() { return this.#dataId }
+	get dataType() { return 'Task' }
 
-		this.refresh();
+	setData(data: Task) {
+		this.#dataId = data.id;
+		this.refresh(data);
+		return this; // allows chaining
 	}
-	get data() {
-		return this.#data;
-	}
-	//#endregion ---------- /Data ---------- 
+	//#endregion ---------- /Data ----------
 
 	//#region    ---------- Key Elements ---------- 
 	#checkEl: HTMLInputElement;
 	#titleEl: HTMLElement;
-	//#endregion ---------- /Key Elements ---------- 
+	//#endregion ---------- /Key Elements ----------
 
 	//#region    ---------- UI Events ---------- 
 	@onEvent('pointerup', 'c-ico')
-	async icoClick() {
+	icoClick() {
 		const fav = !this.classList.contains('fav');
 		trigger(this, 'CHANGE', { detail: { fav } });
 	}
 
 	@onEvent('click', 'input[type="checkbox"]')
-	async checkClick() {
+	checkClick() {
 		const done = this.#checkEl.checked;
 		trigger(this, 'CHANGE', { detail: { done } });
 	}
-	//#endregion ---------- /UI Events ---------- 
+	//#endregion ---------- /UI Events ----------
 
 	constructor() {
 		super();
@@ -95,18 +93,22 @@ export class TaskComponent extends BaseHTMLElement {
 			<c-ico href="#ico-star"></c-ico>
 		`) as [HTMLInputElement, HTMLElement];
 
-		// adopt shadow style	
 		adoptStyleSheets(this, _shadowCss);
 	}
 
-	refresh() {
-		const { title, fav, done } = this.#data;
-		this.#titleEl.textContent = title;
+	protected refresh(data: Task) {
+		const { title, fav, done } = data;
 
+		this.#titleEl.textContent = title;
 		this.#checkEl.checked = (done === true) ?? false;
-		this.#titleEl.style.textDecoration = (done === true) ? 'line-through' : '';
 
 		className(this, { fav, done });
 	}
 }
 
+// Augment the global TagName space to match runtime
+declare global {
+	interface HTMLElementTagNameMap {
+		'c-task': TaskComponent;
+	}
+}
